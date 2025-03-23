@@ -1349,10 +1349,8 @@ and restart Flymake to apply the changes."
 
 ;;; WHICH-KEY
 (use-package which-key
-  :defer t
-  :ensure nil
-  :hook
-  (after-init . which-key-mode)
+  :ensure t  ;; Changed from nil to ensure it's installed
+  :hook (after-init . which-key-mode)
   :config
   (setq which-key-separator "  ")
   (setq which-key-prefix-prefix "... ")
@@ -1360,7 +1358,23 @@ and restart Flymake to apply the changes."
   (setq which-key-idle-delay 1.5)
   (setq which-key-idle-secondary-delay 0.25)
   (setq which-key-add-column-padding 1)
-  (setq which-key-max-description-length 40))
+  (setq which-key-max-description-length 40)
+
+  ;; Custom key descriptions
+  (which-key-add-key-based-replacements "C-c g" "g git")
+
+  ;; Devil mode key descriptions (if you're using the comma prefix)
+  (which-key-add-key-based-replacements ", g" "g git")
+  (which-key-add-key-based-replacements ", f" "f file")
+  (which-key-add-key-based-replacements ", b" "b buffer")
+  (which-key-add-key-based-replacements ", w" "w window")
+  (which-key-add-key-based-replacements ", c" "c code")
+  (which-key-add-key-based-replacements ", p" "p project")
+  (which-key-add-key-based-replacements ", s" "s search")
+  (which-key-add-key-based-replacements ", h" "h help")
+  (which-key-add-key-based-replacements ", e" "e error")
+  (which-key-add-key-based-replacements ", m" "m major")
+  (which-key-add-key-based-replacements ", x" "x execute"))
 
 ;;; WEBJUMP
 (use-package webjump
@@ -2309,6 +2323,27 @@ you can later apply as a patch after reviewing the changes."
           (progn
             (multi-file-replace-regexp-as-diff files from to delimited))
         (message "No files found in marked items.")))))
+
+(use-package devil
+  :ensure t
+  :demand t
+  :vc (:url "https://github.com/fbrosda/devil"
+       :branch "dev"
+       :rev :newest)
+  :custom
+  (devil-exit-key ".")
+  (devil-all-keys-repeatable t)
+  (devil-highlight-repeatable t)
+  (devil-repeatable-keys '(("%k p" "%k n" "%k b" "%k f" "%k a" "%k e")
+                           ("%k m n" "%k m p")
+                           ("%k m b" "%k m f" "%k m a" "%k m e")
+                           ("%k m m f" "%k m m b" "%k m m a" "%k m m e"
+                            "%k m m n" "%k m m p" "%k m m u" "%k m m d")))
+  :bind
+  ([remap describe-key] . devil-describe-key)
+  :config
+  (global-devil-mode))
+
 
 
 (provide 'init)
